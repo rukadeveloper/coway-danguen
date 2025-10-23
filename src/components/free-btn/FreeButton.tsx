@@ -17,22 +17,74 @@ const FB = styled.div`
     position: fixed;
     bottom: 0;
     z-index: 2000001;
+    &:nth-of-type(1) {
+      bottom: 70px;
+    }
+    &:disabled {
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.45);
+      }
+    }
   }
 `;
 
 const FreeButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [nameData, setNameData] = useState("");
+  const [phoneData, setPhoneData] = useState({
+    phoneOne: "",
+    phoneTwo: "",
+    phoneThree: "",
+  });
+  const [isAgreed, setIsAgreed] = useState(false);
+
+  const handleNameData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNameData(e.target.value.trim().slice(0, 3));
+  };
+
+  const handlePhone1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneData((prev) => ({ ...prev, phoneOne: e.target.value }));
+  };
+
+  const handlePhone2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneData((prev) => ({ ...prev, phoneTwo: e.target.value }));
+  };
+
+  const handlePhone3 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneData((prev) => ({ ...prev, phoneThree: e.target.value }));
+  };
+
+  const handleAgree = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsAgreed(e.target.checked);
+  };
 
   return (
     <FB>
-      <button
-        onClick={() => {
-          setIsOpen(false);
-        }}
-      >
+      <button disabled={!nameData || !phoneData || !isAgreed}>
         무료 상담 신청하기
       </button>
-      {isOpen && <NewInput />}
+      <button
+        onClick={() => {
+          setIsOpen((prev) => !prev);
+        }}
+      >
+        {isOpen ? "창 닫기" : "창 열기"}
+      </button>
+      {isOpen && (
+        <NewInput
+          nameData={nameData}
+          phoneData={phoneData}
+          isAgreed={isAgreed}
+          handleNameData={handleNameData}
+          handlePhone1={handlePhone1}
+          handlePhone2={handlePhone2}
+          handlePhone3={handlePhone3}
+          handleAgree={handleAgree}
+        />
+      )}
     </FB>
   );
 };
