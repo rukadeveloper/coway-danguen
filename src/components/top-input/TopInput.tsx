@@ -3,6 +3,7 @@ import EnterInput from "./EnterInput";
 import { useState } from "react";
 import Agree from "./Agree";
 import SelectDay from "./SelectDay";
+import crypto from "crypto-js";
 
 const TopperInput = styled.div`
   width: 500px;
@@ -65,6 +66,35 @@ const TopInput = () => {
 
   const kakaoConsult = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const apiKey = import.meta.env.VITE_SOLAPI_KEY; // NCS... 로 시작
+    const apiSecret = import.meta.env.VITE_SOLAPI_SECRET; // 실제 Secret
+    const date = new Date().toISOString();
+    const salt = crypto.lib.WordArray.random(16).toString(); // 랜덤 문자열
+
+    // 서명 생성
+    const signature = crypto.HmacSHA256(date + salt, apiSecret).toString();
+
+    const authorization = `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`;
+
+    const payload = {
+      message: {
+        to: "01063348324", // 수신자
+        from: "01032797432", // 인증된 발신번호
+        text: "안녕하세요! React에서 보낸 테스트 문자입니다.",
+      },
+    };
+
+    const res = await fetch("https://api.solapi.com/messages/v4/send", {
+      method: "POST",
+      headers: {
+        Authorization: authorization,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    console.log(data);
   };
 
   return (

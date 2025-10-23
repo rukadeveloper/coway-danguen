@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/crypto-js": "^4.2.2",
     "axios": "^1.12.2",
+    "crpyto": "^0.0.1-security",
     "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
     "firebase-functions": "^6.6.0",
     "kakao-js-sdk": "^1.2.3",
     "react": "^19.1.1",
