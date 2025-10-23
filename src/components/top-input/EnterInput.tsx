@@ -1,4 +1,4 @@
-import React, { useState, type Dispatch, type SetStateAction } from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 
 import styled from "styled-components";
 import Combobox from "./Combobox";

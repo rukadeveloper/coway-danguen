@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 
 const NI = styled.div`
