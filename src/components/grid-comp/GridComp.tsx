@@ -174,7 +174,7 @@ const GridComp = () => {
     {
       gridId: 8,
       title: "인덕션",
-      subTitle: "제휴카드 결합시 무료 렌탈 + 3년 후 상반교체 서비스",
+      subTitle: "제휴카드 결합시 무료렌탈 + 3년 후 상반교체 서비스",
       imageUrl: "/ind1.png",
       isBest: false,
       isPackage: false,
@@ -186,7 +186,7 @@ const GridComp = () => {
     {
       gridId: 9,
       title: "인덕션",
-      subTitle: "제휴카드 결합시 무료 렌탈 + 3년 후 상반교체 서비스",
+      subTitle: "제휴카드 결합시 무료렌탈 + 3년 후 상반교체 서비스",
       imageUrl: "/ind2.png",
       isBest: false,
       isPackage: false,
