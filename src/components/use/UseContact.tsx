@@ -13,6 +13,18 @@ const US = styled.div`
       font-size: 20px;
     }
   }
+  > p {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    &:nth-of-type(1) {
+      padding: 6px;
+      background-color: #000;
+      color: #fff;
+      border-radius: 6px;
+    }
+  }
   > img[alt="family"] {
     margin-bottom: 20px;
   }
@@ -56,6 +68,11 @@ const UseContact = () => {
           <UseBox data={d} />
         )
       )}
+      <p>홈케어 닥터 겸 렌탈매니저 준디</p>
+      <p>
+        약속은 생명이다 라는 좌우명을 가지고 <br />
+        친절 상담 방문하고 있습니다.
+      </p>
       <img src="/family.png" alt="family" />
     </US>
   );

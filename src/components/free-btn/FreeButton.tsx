@@ -18,7 +18,7 @@ const FB = styled.div`
     bottom: 0;
     z-index: 2000001;
     &:nth-of-type(1) {
-      bottom: 70px;
+      bottom: 56px;
     }
     &:disabled {
       &::after {
@@ -64,14 +64,14 @@ const FreeButton = () => {
   return (
     <FB>
       <button disabled={!nameData || !phoneData || !isAgreed}>
-        무료 상담 신청하기
+        상담 신청하기
       </button>
       <button
         onClick={() => {
           setIsOpen((prev) => !prev);
         }}
       >
-        {isOpen ? "창 닫기" : "창 열기"}
+        렌탈 & 홈케어 1회 서비스
       </button>
       {isOpen && (
         <NewInput

@@ -3,7 +3,6 @@ import EnterInput from "./EnterInput";
 import { useState } from "react";
 import Agree from "./Agree";
 import SelectDay from "./SelectDay";
-import crypto from "crypto-js";
 
 const TopperInput = styled.div`
   width: 500px;
@@ -14,8 +13,9 @@ const TopperInput = styled.div`
   form {
     > h1 {
       color: #fff;
-      font-size: 16px;
-      margin-bottom: 10px;
+      font-size: 19px;
+      margin-bottom: 20px;
+      text-align: center;
       br {
         display: none;
       }
@@ -34,7 +34,7 @@ const TopperInput = styled.div`
     padding: 30px;
     form {
       > h1 {
-        font-size: 15px;
+        font-size: 17px;
         br {
           display: block;
         }
@@ -61,48 +61,157 @@ const TopInput = () => {
   const [agreeChecked, setAgreeChecked] = useState(false);
 
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const disabled = !selectedDigital || !name || !phone || !agreeChecked;
+  const disabled =
+    !selectedDigital || !name || !phone || !agreeChecked || isSubmitting;
 
   const kakaoConsult = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiKey = import.meta.env.VITE_SOLAPI_KEY; // NCS... 로 시작
-    const apiSecret = import.meta.env.VITE_SOLAPI_SECRET; // 실제 Secret
-    const date = new Date().toISOString();
-    const salt = crypto.lib.WordArray.random(16).toString(); // 랜덤 문자열
+    setIsSubmitting(true);
 
-    // 서명 생성
-    const signature = crypto.HmacSHA256(date + salt, apiSecret).toString();
+    try {
+      // 사용자가 입력한 내용을 그대로 사용
+      const messageText = `${name}님이 상담 신청을 하셨습니다. 전화번호는 ${phone.phone1}-${phone.phone2}-${phone.phone3} 입니다. 상품은 ${selectedDigital.content} 이고, 희망일은 ${selectedDay} 입니다.`;
 
-    const authorization = `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`;
+      // SMS 서비스 선택 (솔라피 직접 호출, 백엔드 프록시, 또는 대안 서비스)
+      const useBackend = true; // true: 백엔드 사용, false: 직접 호출
 
-    const payload = {
-      message: {
-        to: "01063348324", // 수신자
-        from: "01032797432", // 인증된 발신번호
-        text: "안녕하세요! React에서 보낸 테스트 문자입니다.",
-      },
-    };
+      let res;
+      let data;
 
-    const res = await fetch("https://api.solapi.com/messages/v4/send", {
-      method: "POST",
-      headers: {
-        Authorization: authorization,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+      // SMS 전송 방법에 따른 분기 처리
+      if (!useBackend) {
+        // 솔라피(SolAPI) 직접 호출 - 한국 SMS 서비스
+        const apiKey = import.meta.env.VITE_SOLAPI_KEY || "your_solapi_key";
+        const apiSecret =
+          import.meta.env.VITE_SOLAPI_SECRET || "your_solapi_secret";
+        const sender = import.meta.env.VITE_SOLAPI_SENDER || "01012345678";
 
-    const data = await res.json();
-    console.log(data);
+        // 솔라피 API를 위한 기본 인증 (더 간단한 방식)
+        const timestamp = new Date().toISOString();
+        const salt = Math.random().toString(36).substring(2, 15);
+
+        // 솔라피 정확한 HMAC-SHA256 서명 생성
+        const message = timestamp + salt;
+        const key = await crypto.subtle.importKey(
+          "raw",
+          new TextEncoder().encode(apiSecret),
+          { name: "HMAC", hash: "SHA-256" },
+          false,
+          ["sign"]
+        );
+
+        const signature = await crypto.subtle.sign(
+          "HMAC",
+          key,
+          new TextEncoder().encode(message)
+        );
+        const signatureHex = Array.from(new Uint8Array(signature))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+
+        const payload = {
+          message: {
+            to: "01063348324", // 수신자 번호
+            from: sender, // 발신번호
+            text: messageText,
+          },
+        };
+
+        res = await fetch("https://api.solapi.com/messages/v4/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${timestamp}, salt=${salt}, signature=${signatureHex}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        data = await res.json();
+      } else {
+        // 백엔드 프록시를 통한 SMS 전송 (IP 제한 해결)
+        const backendUrl = "http://localhost:3001";
+
+        const payload = {
+          name,
+          phone: `${phone.phone1}-${phone.phone2}-${phone.phone3}`,
+          product: selectedDigital.content,
+          day: selectedDay,
+          message: messageText,
+        };
+
+        res = await fetch(`${backendUrl}/api/send-sms`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        data = await res.json();
+      }
+
+      // 디버깅을 위한 로그 추가
+      if (!useBackend && res && data) {
+        console.log("솔라피 API 응답:", data);
+        if ("status" in res) {
+          console.log("HTTP 상태:", res.status);
+        }
+        if ("headers" in res) {
+          console.log(
+            "응답 헤더:",
+            Object.fromEntries((res.headers as Headers).entries())
+          );
+        }
+
+        // IP 제한 오류 처리
+        if (
+          "errorCode" in data &&
+          data.errorCode === "Forbidden" &&
+          "errorMessage" in data &&
+          typeof data.errorMessage === "string" &&
+          data.errorMessage.includes("IP")
+        ) {
+          console.error("IP 제한 오류:", data.errorMessage);
+          alert(
+            "SMS 서비스 접근 권한이 제한되어 있습니다. 관리자에게 문의해주세요."
+          );
+          return;
+        }
+      } else if (useBackend) {
+        console.log("백엔드 프록시 응답:", data);
+        if ("status" in res) {
+          console.log("HTTP 상태:", res.status);
+        }
+      } else {
+        console.log("대안 서비스 응답:", data);
+      }
+
+      if (res?.ok && data?.success) {
+        alert("상담 신청이 완료되었습니다! 빠른 시일 내에 연락드리겠습니다.");
+        // 폼 초기화
+        setName("");
+        setPhone({ phone1: "", phone2: "", phone3: "" });
+        setSelectedDigital({ content: "coway", index: 0, isOpen: false });
+        setSelectedDay(null);
+        setAgreeChecked(false);
+      } else {
+        alert("상담 신청 중 오류가 발생했습니다. 다시 시도해주세요.");
+        console.error("SMS 전송 실패:", data);
+      }
+    } catch (error) {
+      alert("상담 신청 중 오류가 발생했습니다. 다시 시도해주세요.");
+      console.error("SMS 전송 오류:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <TopperInput>
       <form onSubmit={kakaoConsult}>
-        <h1>
-          * 신용불량자는 렌탈이 제한되며, <br /> 일시불로 구매 가능합니다!
-        </h1>
+        <h1>신용불량자는 렌탈이 제한됩니다.</h1>
         <EnterInput
           label="성함"
           type="text"
@@ -140,7 +249,7 @@ const TopInput = () => {
         <SelectDay day={selectedDay} setDay={setSelectedDay} />
         <Agree agree={agreeChecked} setAgree={setAgreeChecked} />
         <button type="submit" disabled={disabled}>
-          상담신청하기
+          {isSubmitting ? "전송 중..." : "상담 신청하기"}
         </button>
       </form>
     </TopperInput>
