@@ -154,6 +154,7 @@ const GridItems = ({ data, id }: { data: any; id: number }) => {
           src={data.imageUrl}
           alt="grid-item"
           style={{
+            top: id === 0 ? "30px" : "",
             bottom:
               (id === 2 || id === 3 ? "20px" : "") ||
               (id === 4 || id === 5 ? "-10px" : ""),
@@ -195,6 +196,18 @@ const GridItems = ({ data, id }: { data: any; id: number }) => {
                   월 <span>{Number(data.rental).toLocaleString()}원~</span>
                 </dt>
               </dl>
+              {id === 0 && (
+                <>
+                  <dl>
+                    <dd>프로모션</dd>
+                    <dt>월 22,900원</dt>
+                  </dl>
+                  <dl>
+                    <dd>제휴카드</dd>
+                    <dt>월 7,900원</dt>
+                  </dl>
+                </>
+              )}
             </div>
           ) : (
             <div className="price-info-wrapper2">
