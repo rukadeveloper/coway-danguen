@@ -249,7 +249,7 @@ const NewInput = ({
   handlePhone3: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgree: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [_, setIsSubmitting] = useState(false);
 
   // SMS 전송 함수
   const sendSMS = async (e: React.FormEvent<HTMLFormElement>) => {
