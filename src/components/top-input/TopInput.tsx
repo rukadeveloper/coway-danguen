@@ -99,7 +99,8 @@ const TopInput = () => {
         selectedDigital.content
       )} 이고, 희망일은 ${getDayName(selectedDay)}요일 입니다.`;
 
-      // SMS 서비스 선택 (솔라피 직접 호출, 백엔드 프록시, 또는 대안 서비스)
+      // 메시지 서비스 선택 (SMS 또는 카카오톡)
+      const useKakao = false; // true: 카카오톡, false: SMS
       const useBackend = true; // true: 백엔드 사용, false: 직접 호출
 
       let res;
@@ -154,10 +155,34 @@ const TopInput = () => {
         });
 
         data = await res.json();
+      } else if (useKakao) {
+        // 카카오톡 알림톡 전송
+        const backendUrl =
+          "https://sms-backend-56uq7lzp7-rukadevelopers-projects.vercel.app";
+
+        const payload = {
+          name,
+          phone: `${phone.phone1}-${phone.phone2}-${phone.phone3}`,
+          product: selectedDigital.content,
+          day: selectedDay,
+          message: messageText,
+        };
+
+        res = await fetch(`${backendUrl}/api/send-kakao`, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        data = await res.json();
+        console.log("카카오톡 API 응답:", data);
       } else {
         // 백엔드 프록시를 통한 SMS 전송 (IP 제한 해결)
         const backendUrl =
-          "https://sms-backend-ofvvr28fs-rukadevelopers-projects.vercel.app";
+          "https://sms-backend-56uq7lzp7-rukadevelopers-projects.vercel.app";
 
         const payload = {
           name,

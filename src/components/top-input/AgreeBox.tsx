@@ -8,7 +8,7 @@ const AgreesBox = styled.div`
   margin-top: 1rem;
   border-radius: 10px;
   p {
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.9;
     margin-bottom: 1rem;
   }

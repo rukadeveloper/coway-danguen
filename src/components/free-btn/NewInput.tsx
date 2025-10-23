@@ -288,16 +288,17 @@ const NewInput = ({
         null
       )}요일 입니다.`;
 
-      // SMS 서비스 선택 (솔라피 직접 호출, 백엔드 프록시, 또는 대안 서비스)
+      // 메시지 서비스 선택 (SMS 또는 카카오톡)
+      const useKakao = false; // true: 카카오톡, false: SMS
       const useBackend = true; // true: 백엔드 사용, false: 직접 호출
 
       let res;
       let data: any;
 
-      if (useBackend) {
-        // 백엔드 프록시 사용
+      if (useKakao) {
+        // 카카오톡 알림톡 전송
         res = await fetch(
-          "https://sms-backend-ofvvr28fs-rukadevelopers-projects.vercel.app/api/send-sms",
+          "https://sms-backend-56uq7lzp7-rukadevelopers-projects.vercel.app/api/send-kakao",
           {
             method: "POST",
             mode: "cors",
