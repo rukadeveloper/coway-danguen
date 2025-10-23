@@ -78,7 +78,7 @@ const GridComp = () => {
     {
       gridId: 0,
       title: "침대 ~ 매트리스 렌탈 시 ~ 4개월마다 홈케어 서비스",
-      subTitle: "동시구매 10% 할인 + 반값할인 + 재렌탈 할인 최대 20%",
+      subTitle: "동시구매 10%할인 + 반값할인 + 재렌탈 할인 최대 20%",
       imageUrl: "/thumb-ss1_280x280.png",
       isBest: false,
       isPackage: false,
@@ -90,7 +90,7 @@ const GridComp = () => {
     {
       gridId: 1,
       title: "침대 ~ 매트리스 렌탈 시 ~ 4개월마다 홈케어 서비스",
-      subTitle: "동시구매 10% 할인 + 반값할인 + 재렌탈 할인 최대 20%",
+      subTitle: "동시구매 10%할인 + 반값할인 + 재렌탈 할인 최대 20%",
       imageUrl: "/matrix4.png",
       isBest: false,
       isPackage: true,
