@@ -1,6 +1,7 @@
 // 백엔드 SMS 프록시 서버 (Node.js + Express)
 // IP 제한 문제를 해결하기 위한 백엔드 서버
 
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const crypto = require("crypto");
@@ -8,9 +9,62 @@ const crypto = require("crypto");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// CORS 설정 - 더 포괄적인 설정
+const corsOptions = {
+  origin: function (origin, callback) {
+    // 허용된 도메인 목록
+    const allowedOrigins = [
+      "https://coway-danguen.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:5174",
+      "http://localhost:4173", // Vite preview
+      "https://localhost:5173", // HTTPS localhost
+    ];
+
+    // origin이 없거나 허용된 목록에 있으면 허용
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked origin:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
+};
+
 // 미들웨어
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// OPTIONS 요청을 명시적으로 처리
+app.options("*", cors(corsOptions));
+
+// SMS API OPTIONS 요청 처리
+app.options("/api/send-sms", (req, res) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    "https://coway-danguen.netlify.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:5174",
+    "http://localhost:4173",
+    "https://localhost:5173",
+  ];
+
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  } else {
+    res.header("Access-Control-Allow-Origin", "*");
+  }
+  res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.status(200).end();
+});
 
 // 솔라피 API 설정 (실제 키로 변경하세요)
 // 실제 솔라피 API 키 설정
@@ -38,10 +92,30 @@ function generateSignature(apiSecret, message) {
 
 // SMS 전송 API 엔드포인트
 app.post("/api/send-sms", async (req, res) => {
+  // CORS 헤더 명시적 설정 - Vercel 호환
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    "https://coway-danguen.netlify.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:5174",
+    "http://localhost:4173",
+    "https://localhost:5173",
+  ];
+
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  } else {
+    res.header("Access-Control-Allow-Origin", "*");
+  }
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
   try {
     const { name, phone, product, day, message } = req.body;
 
     console.log("SMS 전송 요청 받음:", { name, phone, product, day });
+    console.log("📱 수신번호 확인:", phone);
 
     // 테스트 모드: 실제 SMS 전송 대신 성공 응답 반환
     const isTestMode = false; // 실제 키로 강제 전송 모드
@@ -74,13 +148,26 @@ app.post("/api/send-sms", async (req, res) => {
     const messageToSign = timestamp + salt;
     const signature = generateSignature(SOLAPI_SECRET, messageToSign);
 
+    // 전화번호에서 하이픈 제거
+    const cleanPhone = phone.replace(/-/g, "");
+    console.log("📱 정리된 전화번호:", cleanPhone);
+
+    // 01063348324에서 사용자 입력 번호로 문자 발송
+    const senderPhone = SOLAPI_SENDER; // 01063348324 (고정 발신번호)
+    const receiverPhone = cleanPhone; // 사용자 입력 번호 (수신번호)
+    console.log("📱 발신번호:", senderPhone);
+    console.log("📱 수신번호:", receiverPhone);
+    console.log("📱 사용자 입력 번호:", cleanPhone);
+
     const payload = {
       message: {
-        to: phone,
-        from: SOLAPI_SENDER,
+        to: receiverPhone, // 사용자 입력 번호 (수신)
+        from: senderPhone, // 01063348324 (발신)
         text: message,
       },
     };
+
+    console.log("📤 솔라피 API 페이로드:", JSON.stringify(payload, null, 2));
 
     const solapiResponse = await fetch(
       "https://api.solapi.com/messages/v4/send",
@@ -127,6 +214,15 @@ app.post("/api/send-sms", async (req, res) => {
 // 서버 시작
 app.listen(PORT, () => {
   console.log(`SMS 프록시 서버가 포트 ${PORT}에서 실행 중입니다.`);
+  console.log("CORS 설정:");
+  console.log("- 허용된 도메인:", [
+    "https://coway-danguen.netlify.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:5174",
+    "http://localhost:4173",
+    "https://localhost:5173",
+  ]);
 });
 
 module.exports = app;

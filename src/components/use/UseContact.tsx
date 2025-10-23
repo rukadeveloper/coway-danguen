@@ -26,7 +26,7 @@ const US = styled.div`
     }
   }
   > img[alt="family"] {
-    margin-bottom: 20px;
+    margin-bottom: 130px;
   }
   > img[alt="mark"] {
     position: absolute;
@@ -68,7 +68,7 @@ const UseContact = () => {
           <UseBox data={d} />
         )
       )}
-      <p>홈케어 닥터 겸 렌탈매니저 준디</p>
+      <p>홈케어 닥터겸 렌탈매니저 준디</p>
       <p>
         약속은 생명이다 라는 좌우명을 가지고 <br />
         친절 상담 방문하고 있습니다.

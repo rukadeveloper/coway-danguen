@@ -199,7 +199,7 @@ const GridComp = () => {
       gridId: 10,
       title: "안마 의자",
       subTitle:
-        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 재품으로|렌탈구매 가능합니다 (담당차량운행)",
+        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 제품으로|렌탈구매 가능합니다 (담당차량운행)",
       imageUrl: "/ch2.png",
       isBest: false,
       isPackage: false,
@@ -212,7 +212,7 @@ const GridComp = () => {
       gridId: 11,
       title: "안마 의자",
       subTitle:
-        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 재품으로|렌탈구매 가능합니다 (담당차량운행)",
+        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 제품으로|렌탈구매 가능합니다 (담당차량운행)",
       imageUrl: "/ch5.png",
       isBest: false,
       isPackage: false,
@@ -225,7 +225,7 @@ const GridComp = () => {
       gridId: 13,
       title: "안마 의자",
       subTitle:
-        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 재품으로|렌탈구매 가능합니다 (담당차량운행)",
+        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 제품으로|렌탈구매 가능합니다 (담당차량운행)",
       imageUrl: "/chair1.png",
       isBest: false,
       isPackage: false,
@@ -238,7 +238,7 @@ const GridComp = () => {
       gridId: 14,
       title: "안마 의자",
       subTitle:
-        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 재품으로|렌탈구매 가능합니다 (담당차량운행)",
+        "갤러리 매장에서 체험 후 디자인과 체형에 맞는 안마기능 제품으로|렌탈구매 가능합니다 (담당차량운행)",
       imageUrl: "/chair2.png",
       isBest: false,
       isPackage: false,

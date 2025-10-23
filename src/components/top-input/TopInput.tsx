@@ -71,8 +71,33 @@ const TopInput = () => {
     setIsSubmitting(true);
 
     try {
+      // 요일을 한글로 변환하는 함수
+      const getDayName = (day: number | null) => {
+        if (day === null) return "미선택";
+        const days = ["월", "화", "수", "목", "금", "토", "일"];
+        return days[day] || "미선택";
+      };
+
+      // 상품명을 한글로 변환하는 함수
+      const getProductName = (content: string) => {
+        const productMap: { [key: string]: string } = {
+          coway: "코웨이",
+          air: "공기청정기",
+          cloth: "의류 청정기",
+          vide: "비데",
+          yeonsoo: "연수기",
+          induction: "인덕션",
+          chair: "안마의자",
+        };
+        return productMap[content] || content;
+      };
+
       // 사용자가 입력한 내용을 그대로 사용
-      const messageText = `${name}님이 상담 신청을 하셨습니다. 전화번호는 ${phone.phone1}-${phone.phone2}-${phone.phone3} 입니다. 상품은 ${selectedDigital.content} 이고, 희망일은 ${selectedDay} 입니다.`;
+      const messageText = `${name}님이 상담 신청을 하셨습니다. 전화번호는 ${
+        phone.phone1
+      }-${phone.phone2}-${phone.phone3} 입니다. 상품은 ${getProductName(
+        selectedDigital.content
+      )} 이고, 희망일은 ${getDayName(selectedDay)}요일 입니다.`;
 
       // SMS 서비스 선택 (솔라피 직접 호출, 백엔드 프록시, 또는 대안 서비스)
       const useBackend = true; // true: 백엔드 사용, false: 직접 호출
@@ -113,7 +138,7 @@ const TopInput = () => {
 
         const payload = {
           message: {
-            to: "01063348324", // 수신자 번호
+            to: "01057900593", // 수신자 번호
             from: sender, // 발신번호
             text: messageText,
           },
@@ -131,7 +156,8 @@ const TopInput = () => {
         data = await res.json();
       } else {
         // 백엔드 프록시를 통한 SMS 전송 (IP 제한 해결)
-        const backendUrl = "http://localhost:3001";
+        const backendUrl =
+          "https://sms-backend-ofvvr28fs-rukadevelopers-projects.vercel.app";
 
         const payload = {
           name,
@@ -143,6 +169,7 @@ const TopInput = () => {
 
         res = await fetch(`${backendUrl}/api/send-sms`, {
           method: "POST",
+          mode: "cors",
           headers: {
             "Content-Type": "application/json",
           },
