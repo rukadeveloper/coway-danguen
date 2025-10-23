@@ -100,7 +100,7 @@ const FreeButton = () => {
 
       // 메시지 서비스 선택 (SMS 또는 카카오톡)
       const useKakao = false; // true: 카카오톡, false: SMS
-      const useBackend = true; // true: 백엔드 사용, false: 직접 호출
+      // // true: 백엔드 사용, false: 직접 호출
 
       let res;
       let data: any;
