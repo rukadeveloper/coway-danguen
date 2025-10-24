@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import EnterInput from "./EnterInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Agree from "./Agree";
 import SelectDay from "./SelectDay";
 
