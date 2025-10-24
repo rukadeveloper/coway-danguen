@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import AgreeBox from "../top-input/AgreeBox";
-import { useState } from "react";
 
 const NI = styled.div`
   width: 100%;
@@ -249,118 +248,9 @@ const NewInput = ({
   handlePhone3: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgree: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  const [_, setIsSubmitting] = useState(false);
-
-  // SMS 전송 함수
-  const sendSMS = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // 상품명을 한글로 변환하는 함수
-      const getProductName = (content: string) => {
-        const productMap: { [key: string]: string } = {
-          coway: "코웨이",
-          air: "공기청정기",
-          cloth: "의류 청정기",
-          vide: "비데",
-          yeonsoo: "연수기",
-          induction: "인덕션",
-          chair: "안마의자",
-          free: "무료상담",
-        };
-        return productMap[content] || content;
-      };
-
-      // 요일을 한글로 변환하는 함수
-      const getDayName = (day: number | null) => {
-        if (day === null) return "미선택";
-        const days = ["월", "화", "수", "목", "금", "토", "일"];
-        return days[day] || "미선택";
-      };
-
-      // 사용자가 입력한 내용을 그대로 사용
-      const messageText = `${nameData}님이 상담 신청을 하셨습니다. 전화번호는 ${
-        phoneData.phoneOne
-      }-${phoneData.phoneTwo}-${
-        phoneData.phoneThree
-      } 입니다. 상품은 ${getProductName("free")} 이고, 희망일은 ${getDayName(
-        null
-      )}요일 입니다.`;
-
-      // 메시지 서비스 선택 (SMS 또는 카카오톡)
-      const useKakao = false; // true: 카카오톡, false: SMS
-
-      let res;
-      let data: any;
-
-      if (useKakao) {
-        // 카카오톡 알림톡 전송
-        res = await fetch(
-          "https://sms-backend-56uq7lzp7-rukadevelopers-projects.vercel.app/api/send-kakao",
-          {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: nameData,
-              phone: `${phoneData.phoneOne}-${phoneData.phoneTwo}-${phoneData.phoneThree}`,
-              product: "무료상담",
-              day: null,
-              message: messageText,
-            }),
-          }
-        );
-
-        data = await res.json();
-        console.log("백엔드 프록시 응답:", data);
-        console.log("HTTP 상태:", res.status);
-      }
-
-      if (
-        res &&
-        "status" in res &&
-        res.status === 200 &&
-        data &&
-        "success" in data &&
-        data.success
-      ) {
-        alert("상담 신청이 완료되었습니다!");
-        // 폼 초기화
-        handleNameData({
-          target: { value: "" },
-        } as React.ChangeEvent<HTMLInputElement>);
-        handlePhone1({
-          target: { value: "" },
-        } as React.ChangeEvent<HTMLInputElement>);
-        handlePhone2({
-          target: { value: "" },
-        } as React.ChangeEvent<HTMLInputElement>);
-        handlePhone3({
-          target: { value: "" },
-        } as React.ChangeEvent<HTMLInputElement>);
-        handleAgree({
-          target: { checked: false },
-        } as React.ChangeEvent<HTMLInputElement>);
-      } else {
-        const errorMessage =
-          data && "errorMessage" in data
-            ? data.errorMessage
-            : "SMS 전송에 실패했습니다.";
-        alert(`상담 신청 실패: ${errorMessage}`);
-      }
-    } catch (error) {
-      console.error("SMS 전송 오류:", error);
-      alert("상담 신청 중 오류가 발생했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
   return (
     <NI>
-      <form onSubmit={sendSMS}>
+      <form>
         <span className="title">
           * 신용불량자는 렌탈이 제한되며,일시불로 구매 가능합니다!
         </span>

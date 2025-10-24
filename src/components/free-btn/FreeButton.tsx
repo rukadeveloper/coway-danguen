@@ -33,7 +33,6 @@ const FB = styled.div`
 
 const FreeButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [nameData, setNameData] = useState("");
   const [phoneData, setPhoneData] = useState({
     phoneOne: "",
@@ -62,120 +61,18 @@ const FreeButton = () => {
     setIsAgreed(e.target.checked);
   };
 
-  // SMS 전송 함수
-  const sendSMS = async () => {
-    setIsSubmitting(true);
-
-    try {
-      // 상품명을 한글로 변환하는 함수
-      const getProductName = (content: string) => {
-        const productMap: { [key: string]: string } = {
-          coway: "코웨이",
-          air: "공기청정기",
-          cloth: "의류 청정기",
-          vide: "비데",
-          yeonsoo: "연수기",
-          induction: "인덕션",
-          chair: "안마의자",
-          free: "무료상담",
-        };
-        return productMap[content] || content;
-      };
-
-      // 요일을 한글로 변환하는 함수
-      const getDayName = (day: number | null) => {
-        if (day === null) return "미선택";
-        const days = ["월", "화", "수", "목", "금", "토", "일"];
-        return days[day] || "미선택";
-      };
-
-      // 사용자가 입력한 내용을 그대로 사용
-      const messageText = `${nameData}님이 상담 신청을 하셨습니다. 전화번호는 ${
-        phoneData.phoneOne
-      }-${phoneData.phoneTwo}-${
-        phoneData.phoneThree
-      } 입니다. 상품은 ${getProductName("free")} 이고, 희망일은 ${getDayName(
-        null
-      )}요일 입니다.`;
-
-      // 메시지 서비스 선택 (SMS 또는 카카오톡)
-      const useKakao = false; // true: 카카오톡, false: SMS
-      // // true: 백엔드 사용, false: 직접 호출
-
-      let res;
-      let data: any;
-
-      if (useKakao) {
-        // 카카오톡 알림톡 전송
-        res = await fetch(
-          "https://sms-backend-56uq7lzp7-rukadevelopers-projects.vercel.app/api/send-kakao",
-          {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: nameData,
-              phone: `${phoneData.phoneOne}-${phoneData.phoneTwo}-${phoneData.phoneThree}`,
-              product: "무료상담",
-              day: null,
-              message: messageText,
-            }),
-          }
-        );
-
-        data = await res.json();
-        console.log("백엔드 프록시 응답:", data);
-        console.log("HTTP 상태:", res.status);
-      }
-
-      if (
-        res &&
-        "status" in res &&
-        res.status === 200 &&
-        data &&
-        "success" in data &&
-        data.success
-      ) {
-        alert("상담 신청이 완료되었습니다!");
-        // 폼 초기화
-        setNameData("");
-        setPhoneData({
-          phoneOne: "",
-          phoneTwo: "",
-          phoneThree: "",
-        });
-        setIsAgreed(false);
-      } else {
-        const errorMessage =
-          data && "errorMessage" in data
-            ? data.errorMessage
-            : "SMS 전송에 실패했습니다.";
-        alert(`상담 신청 실패: ${errorMessage}`);
-      }
-    } catch (error) {
-      console.error("SMS 전송 오류:", error);
-      alert("상담 신청 중 오류가 발생했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <FB>
       <button
-        onClick={sendSMS}
         disabled={
           !nameData ||
           !phoneData.phoneOne ||
           !phoneData.phoneTwo ||
           !phoneData.phoneThree ||
-          !isAgreed ||
-          isSubmitting
+          !isAgreed
         }
       >
-        {isSubmitting ? "상담 신청 중..." : "상담 신청하기"}
+        상담 신청하기
       </button>
       <button
         onClick={() => {
