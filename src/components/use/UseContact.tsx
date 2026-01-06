@@ -123,9 +123,12 @@ const UseContact = () => {
         정수기 공기청정기, 의류 스타일러, 제습기 <br />
         비데, 연수기, 인덕션, 쇼파, 에어컨, 안마의자 <br />
         똑똑한 소비자가 되자! <br /> 상담 방문 시 친절상담 해 드립니다!{" "}
-        <span>😄</span>
+        <span>😄</span> <br />
+        상담 방문 시 똑똑한 소비자로 만들어 드립니다! 😄
       </p>
-      <img src="/family.jpeg" alt="family" style={{ marginBottom: "200px" }} />
+      <video autoPlay muted loop playsInline style={{ marginBottom: "200px", width: "100%", borderRadius: "8px" }}>
+        <source src="/market_video3.mp4" type="video/mp4" />
+      </video>
     </US>
   );
 };
