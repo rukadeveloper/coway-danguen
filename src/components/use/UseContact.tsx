@@ -125,8 +125,16 @@ const UseContact = () => {
         똑똑한 소비자가 되자! <br /> 상담 방문 시 친절상담 해 드립니다!{" "}
         <span>😄</span> <br />
         상담 방문 시 똑똑한 소비자로 만들어 드립니다! 😄
+        <br />
+        (무료렌탈 사용 방법)
       </p>
-      <video autoPlay muted loop playsInline style={{ marginBottom: "200px", width: "100%", borderRadius: "8px" }}>
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{ marginBottom: "200px", width: "100%", borderRadius: "8px" }}
+      >
         <source src="/market_video3.mp4" type="video/mp4" />
       </video>
     </US>
