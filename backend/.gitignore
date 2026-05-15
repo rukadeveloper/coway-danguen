@@ -2,3 +2,5 @@
 /.git
 /.env
 .vercel
+
+.DS_Store
