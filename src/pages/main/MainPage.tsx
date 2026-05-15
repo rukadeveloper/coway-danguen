@@ -1,11 +1,8 @@
 import styled from "styled-components";
 
-import FreeButton from "../../components/free-btn/FreeButton";
 import MainLogo from "../../components/logo/MainLogo";
 import Matrix from "../../components/matrix/Matrix";
-import TopInput from "../../components/top-input/TopInput";
 import UseContact from "../../components/use/UseContact";
-import CallButton from "../../components/call-btn/CallButton";
 import AllianceCard from "../../components/alliance-card/AllianceCard";
 import BedList from "../../components/bed-list/BedList";
 
